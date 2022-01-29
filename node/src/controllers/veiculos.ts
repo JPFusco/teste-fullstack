@@ -144,7 +144,7 @@ const atualizarVeiculoParcial = async (req: Request, res: Response) => {
       body.descricao = descricao;
     }
 
-    if (vendido) {
+    if (vendido !== undefined) {
       body.vendido = vendido;
     }
 

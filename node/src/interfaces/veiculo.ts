@@ -1,5 +1,6 @@
 interface IVeiculo {
-  id: number,
+  id: string,
+  usuario_id: string,
   veiculo: string,
   marca: string,
   ano: number,

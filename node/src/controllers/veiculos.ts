@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import knexInstance from '../connection';
-import IVeiculo from '../interfaces/db_interfaces';
+import IVeiculo from '../interfaces/veiculo';
 import schemaCadastrarVeiculo from '../schema/veiculos/schemaCadastrarVeiculo';
 import schemaAtualizarVeiculo from '../schema/veiculos/schemaAtualizarVeiculo';
 
@@ -9,21 +9,28 @@ interface IErr {
   message: string
 }
 
-const encontrarVeiculoDB = async (id: string) => {
-  const veiculo = await knexInstance<IVeiculo>('veiculos').where('id', id).select('*').first();
+const encontrarVeiculoDB = async (idVeiculo: string, idUsuario: string) => {
+  const veiculo = await knexInstance<IVeiculo>('veiculos')
+    .where({ id: idVeiculo })
+    .select('*')
+    .first();
   const err: Partial<IErr> = { ok: true };
 
   if (!veiculo) {
     err.ok = false;
-    err.message = `Não foi possível encontrar o veículo de id ${id}`;
+    err.message = `Não foi possível encontrar o veículo de id ${idVeiculo}`;
+  } else if (String(veiculo.usuario_id) !== idUsuario) {
+    err.ok = false;
+    err.message = `Você não possui autorização para manipular o veículo de id ${idVeiculo}`;
   }
 
   return { veiculo, err };
 };
 
 const obterVeiculos = async (req: Request, res: Response) => {
+  const idUsuario = req.usuario;
   try {
-    const veiculos = await knexInstance<IVeiculo>('veiculos').select('*');
+    const veiculos = await knexInstance<IVeiculo>('veiculos').select('*').where({ usuario_id: idUsuario });
 
     if (!veiculos) {
       return res.status(400).json({ message: 'Não foi possível encontrar um veículo' });
@@ -36,10 +43,11 @@ const obterVeiculos = async (req: Request, res: Response) => {
 };
 
 const obterVeiculo = async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const { id: idVeiculo } = req.params;
+  const idUsuario = req.usuario;
 
   try {
-    const { veiculo, err } = await encontrarVeiculoDB(id);
+    const { veiculo, err } = await encontrarVeiculoDB(idVeiculo, idUsuario);
 
     if (!err.ok) {
       return res.status(400).json({ message: err.message });
@@ -55,11 +63,13 @@ const cadastrarVeiculo = async (req: Request, res: Response) => {
   const {
     veiculo, marca, ano, descricao, vendido,
   } = req.body;
+  const idUsuario = req.usuario;
 
   try {
     await schemaCadastrarVeiculo.validate(req.body);
 
     const veiculoCadastrado = await knexInstance<IVeiculo>('veiculos').insert({
+      usuario_id: idUsuario,
       veiculo,
       marca,
       ano,
@@ -81,18 +91,19 @@ const atualizarVeiculoCompleto = async (req: Request, res: Response) => {
   const {
     veiculo, marca, ano, descricao, vendido,
   } = req.body;
-  const { id } = req.params;
+  const { id: idVeiculo } = req.params;
+  const idUsuario = req.usuario;
 
   try {
     await schemaCadastrarVeiculo.validate(req.body);
 
-    const { err } = await encontrarVeiculoDB(id);
+    const { err } = await encontrarVeiculoDB(idVeiculo, idUsuario);
 
     if (!err.ok) {
       return res.status(400).json({ message: err.message });
     }
 
-    const veiculoAtualizado = await knexInstance<IVeiculo>('veiculos').where('id', id).update({
+    const veiculoAtualizado = await knexInstance<IVeiculo>('veiculos').where({ id: idVeiculo }).update({
       veiculo,
       marca,
       ano,
@@ -102,7 +113,7 @@ const atualizarVeiculoCompleto = async (req: Request, res: Response) => {
     }).returning('*');
 
     if (!veiculoAtualizado) {
-      return res.status(400).json({ message: `Não foi possível atualizar o veículo de id ${id}` });
+      return res.status(400).json({ message: `Não foi possível atualizar o veículo de id ${idVeiculo}` });
     }
 
     return res.status(200).json('Veículo atualizado com sucesso');
@@ -115,12 +126,13 @@ const atualizarVeiculoParcial = async (req: Request, res: Response) => {
   const {
     veiculo, marca, ano, descricao, vendido,
   } = req.body;
-  const { id } = req.params;
+  const { id: idVeiculo } = req.params;
+  const idUsuario = req.usuario;
 
   try {
     await schemaAtualizarVeiculo.validate(req.body);
 
-    const { err } = await encontrarVeiculoDB(id);
+    const { err } = await encontrarVeiculoDB(idVeiculo, idUsuario);
 
     if (!err.ok) {
       return res.status(400).json({ message: err.message });
@@ -149,12 +161,12 @@ const atualizarVeiculoParcial = async (req: Request, res: Response) => {
     }
 
     const veiculoAtualizado = await knexInstance<IVeiculo>('veiculos')
-      .where('id', id)
+      .where('id', idVeiculo)
       .update({ ...body, updated: new Date() })
       .returning('*');
 
     if (!veiculoAtualizado) {
-      return res.status(400).json({ message: `Não foi possível atualizar o veículo de id ${id}` });
+      return res.status(400).json({ message: `Não foi possível atualizar o veículo de id ${idVeiculo}` });
     }
 
     return res.status(200).json('Veículo atualizado com sucesso');
@@ -164,16 +176,17 @@ const atualizarVeiculoParcial = async (req: Request, res: Response) => {
 };
 
 const excluirVeiculo = async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const { id: idVeiculo } = req.params;
+  const idUsuario = req.usuario;
 
   try {
-    const { err } = await encontrarVeiculoDB(id);
+    const { err } = await encontrarVeiculoDB(idVeiculo, idUsuario);
 
     if (!err.ok) {
       return res.status(400).json({ message: err.message });
     }
 
-    const veiculoExcluido = await knexInstance<IVeiculo>('veiculos').where('id', id).del().returning('*');
+    const veiculoExcluido = await knexInstance<IVeiculo>('veiculos').where({ id: idVeiculo }).del().returning('*');
 
     if (!veiculoExcluido) {
       return res.status(400).json({ message: 'Não foi possível excluir o veículo' });

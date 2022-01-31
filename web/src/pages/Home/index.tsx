@@ -38,6 +38,7 @@ export default function Home() {
     }
 
     atualizarVeiculos();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modalAberto]);
 
   useEffect(() => {
@@ -58,6 +59,7 @@ export default function Home() {
     }
 
     buscarVeiculosIniciais();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleAddClick = () => {

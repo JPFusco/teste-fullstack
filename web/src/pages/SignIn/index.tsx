@@ -1,5 +1,5 @@
 import TextField from '@mui/material/TextField';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Logo from '../../assets/logo.svg';
 import useGlobalContexts from '../../hooks/useGlobalContext';
@@ -15,8 +15,15 @@ export default function SignIn() {
     email: '',
     senha: ''
   });
-  const { setAuthToken } = useGlobalContexts();
+  const { authToken, setAuthToken } = useGlobalContexts();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (authToken) {
+      navigate('/home');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormularioLogin({

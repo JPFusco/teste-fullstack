@@ -34,6 +34,7 @@ export default function ModalNovoEditarVeiculo() {
         vendido: veiculoDetalhado.vendido
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tipoModal]);
 
   const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>): void => {

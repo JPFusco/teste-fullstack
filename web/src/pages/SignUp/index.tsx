@@ -1,7 +1,8 @@
 import TextField from '@mui/material/TextField';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Logo from '../../assets/logo.svg';
+import useGlobalContexts from '../../hooks/useGlobalContext';
 import './style.css';
 
 interface IFormularioCadastro {
@@ -16,7 +17,15 @@ export default function SignUp() {
     senha: '',
     confirmarSenha: ''
   });
+  const { authToken } = useGlobalContexts();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (authToken) {
+      navigate('/home');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormularioCadastro({

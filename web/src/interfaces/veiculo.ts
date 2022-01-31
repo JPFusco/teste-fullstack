@@ -2,7 +2,7 @@ interface IVeiculo {
   id: number,
   veiculo: string,
   marca: string,
-  ano: number,
+  ano: string,
   descricao: string,
   vendido: boolean
 }

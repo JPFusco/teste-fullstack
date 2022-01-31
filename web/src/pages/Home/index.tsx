@@ -22,26 +22,6 @@ export default function Home() {
   } = useGlobalContext();
 
   useEffect(() => {
-    const atualizarVeiculos = async () => {
-      try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/veiculos`, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${authToken}`
-          }
-        });
-        const data = await response.json();
-        setVeiculos(data);
-      } catch (error: any) {
-        console.log(error.message);
-      }
-    }
-
-    atualizarVeiculos();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modalAberto]);
-
-  useEffect(() => {
     const buscarVeiculosIniciais = async () => {
       try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/veiculos`, {
@@ -61,6 +41,15 @@ export default function Home() {
     buscarVeiculosIniciais();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (veiculos.length === 0) {
+      return setVeiculoDetalhado({ veiculo: '', marca: '', ano: '', descricao: '', vendido: false, id: 0 });
+    }
+
+    setVeiculoDetalhado(veiculos[0]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [veiculos]);
 
   const handleAddClick = () => {
     setTipoModal("Novo");
@@ -88,7 +77,7 @@ export default function Home() {
             <h1>
               Detalhes
             </h1>
-            {veiculoDetalhado && <DetalhesVeiculo veiculo={veiculoDetalhado} />}
+            {veiculoDetalhado.id !== 0 && <DetalhesVeiculo />}
           </div>
         </div>
         {modalAberto && <ModalNovoEditarVeiculo />}

@@ -1,4 +1,5 @@
 .detalhes-container {
+  position: relative;
   text-align: start;
 
   background-color: #F1F2F0;
@@ -78,6 +79,15 @@
   color: #EEEFED;
 }
 
-.detalhes-footer > img {
-  margin-right: 10px;
+.status-vendido {
+  position: absolute;
+  top: 1.6rem;
+  right: 1.6rem;
+}
+
+.excluir {
+  cursor: pointer;
+
+  width: 30px;
+  height: 30px;
 }

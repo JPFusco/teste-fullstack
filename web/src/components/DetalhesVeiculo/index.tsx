@@ -1,13 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import IconeExcluir from '../../assets/delete-icon.svg';
 import IconeEditar from '../../assets/icone-editar.svg';
 import VendidoFalse from '../../assets/vendido-false.svg';
 import VendidoTrue from '../../assets/vendido-true.svg';
 import useGlobalContext from '../../hooks/useGlobalContext';
-import IVeiculo from '../../interfaces/veiculo';
 import './style.css';
 
-export default function DetalhesVeiculo({ veiculo }: { veiculo: IVeiculo }) {
-  const { setTipoModal, setModalAberto, formulario, setFormulario, veiculoDetalhado } = useGlobalContext();
+export default function DetalhesVeiculo() {
+  const {
+    setTipoModal,
+    setModalAberto,
+    formulario,
+    setFormulario,
+    veiculoDetalhado,
+    authToken,
+    updateVeiculos
+  } = useGlobalContext();
 
   const handleClick = (): void => {
     setTipoModal("Editar");
@@ -18,11 +26,34 @@ export default function DetalhesVeiculo({ veiculo }: { veiculo: IVeiculo }) {
     setFormulario({
       veiculo: veiculoDetalhado.veiculo,
       marca: veiculoDetalhado.marca,
-      ano: `${veiculoDetalhado.ano}`,
+      ano: veiculoDetalhado.ano,
       descricao: veiculoDetalhado.descricao,
       vendido: veiculoDetalhado.vendido
     });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [veiculoDetalhado]);
+
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/veiculos/${veiculoDetalhado.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`
+        }
+      });
+
+      if (response.status >= 400) {
+        const error = response.json();
+        throw error;
+      }
+
+      updateVeiculos();
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <div className="detalhes-container">
@@ -55,10 +86,19 @@ export default function DetalhesVeiculo({ veiculo }: { veiculo: IVeiculo }) {
           <img src={IconeEditar} alt="Editar veículo" />
           <span>EDITAR</span>
         </button>
-        <img
-          src={formulario.vendido ? VendidoTrue : VendidoFalse}
-          alt={formulario.vendido ? "Veículo vendido" : "Veículo não foi vendido"}
-        />
+        <div className="footer-imgs">
+          <img
+            className='status-vendido'
+            src={formulario.vendido ? VendidoTrue : VendidoFalse}
+            alt={formulario.vendido ? "Veículo vendido" : "Veículo não foi vendido"}
+          />
+          <img
+            className='excluir'
+            src={IconeExcluir}
+            alt="Excluir veículo"
+            onClick={handleDelete}
+          />
+        </div>
       </div>
     </div>
   );

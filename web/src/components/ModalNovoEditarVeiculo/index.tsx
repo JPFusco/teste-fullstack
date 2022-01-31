@@ -8,12 +8,14 @@ import './style.css';
 
 export default function ModalNovoEditarVeiculo() {
   const {
+    veiculos,
     veiculoDetalhado,
     tipoModal,
     setModalAberto,
     formulario,
     setFormulario,
-    authToken
+    authToken,
+    updateVeiculos
   } = useGlobalContext();
 
   useEffect((): void => {
@@ -53,13 +55,15 @@ export default function ModalNovoEditarVeiculo() {
   }
 
   const handleFecharModal = (): void => {
-    setFormulario({
-      veiculo: veiculoDetalhado.veiculo,
-      marca: veiculoDetalhado.marca,
-      ano: `${veiculoDetalhado.ano}`,
-      descricao: veiculoDetalhado.descricao,
-      vendido: veiculoDetalhado.vendido
-    });
+    if (veiculos.length > 0) {
+      setFormulario({
+        veiculo: veiculoDetalhado.veiculo,
+        marca: veiculoDetalhado.marca,
+        ano: `${veiculoDetalhado.ano}`,
+        descricao: veiculoDetalhado.descricao,
+        vendido: veiculoDetalhado.vendido
+      });
+    }
 
     setModalAberto(false);
   }
@@ -72,16 +76,17 @@ export default function ModalNovoEditarVeiculo() {
     }
 
     try {
-      tipoModal === "Novo" ? cadastrarVeiculo() : atualizarVeiculo();
+      tipoModal === "Novo" ? await cadastrarVeiculo() : await atualizarVeiculo();
+      updateVeiculos();
     } catch (error: any) {
       console.log(error.message);
     }
 
-    setModalAberto(false);
+    handleFecharModal();
   }
 
   const cadastrarVeiculo = async (): Promise<void> => {
-    await fetch(`${process.env.REACT_APP_API_URL}/veiculos`, {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/veiculos`, {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',
@@ -89,6 +94,12 @@ export default function ModalNovoEditarVeiculo() {
       },
       body: JSON.stringify(formulario)
     });
+
+    const veiculoCadastrado = await response.json();
+
+    if (response.status >= 400) {
+      throw veiculoCadastrado;
+    }
   }
 
   const atualizarVeiculo = async (): Promise<void> => {
@@ -99,7 +110,7 @@ export default function ModalNovoEditarVeiculo() {
       utilizarPut = false;
     }
 
-    await fetch(`${process.env.REACT_APP_API_URL}/veiculos/${veiculoDetalhado.id}`, {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/veiculos/${veiculoDetalhado.id}`, {
       method: utilizarPut ? "PUT" : "PATCH",
       headers: {
         'Content-Type': 'application/json',
@@ -108,6 +119,10 @@ export default function ModalNovoEditarVeiculo() {
       body: JSON.stringify(utilizarPut ? formulario : camposDiferentes)
     });
 
+    if (response.status >= 400) {
+      const error = await response.json();
+      throw error;
+    }
   }
 
   const algumCampoDiferente = (): Partial<IFormulario> => {
@@ -121,7 +136,7 @@ export default function ModalNovoEditarVeiculo() {
       camposDiferentes.marca = formulario.marca;
     }
 
-    if (Number(formulario.ano) !== veiculoDetalhado.ano) {
+    if (formulario.ano !== veiculoDetalhado.ano) {
       camposDiferentes.ano = formulario.ano;
     }
 

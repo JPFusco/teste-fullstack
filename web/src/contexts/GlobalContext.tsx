@@ -17,6 +17,7 @@ interface IGlobalContext {
   authToken: String | undefined;
   setAuthToken: React.Dispatch<String>;
   removeAuthToken: () => void;
+  updateVeiculos: () => void;
 }
 
 export const GlobalContext = createContext<IGlobalContext>({} as IGlobalContext);

@@ -1,4 +1,4 @@
-Link deploy: https://testefullstack-web.netlify.app/
+Link deploy: https://testefullstack-web.netlify.app/ (Se você receber erro de network quando tentar criar uma conta é porque a API está inativa, em alguns segundos ela deve começar a funcionar)
 
 
 # Teste fullstack

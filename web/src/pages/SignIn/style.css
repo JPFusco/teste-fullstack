@@ -1,11 +1,11 @@
-.sign-up-container {
+.sign-in-container {
   width: 100vw;
   min-height: 100vh;
 
   display: flex;
 }
 
-.sign-up-left {
+.sign-in-left {
   width: 50%;
 
   display: flex;
@@ -15,7 +15,7 @@
   background-color: #364147;
 }
 
-.sign-up-right {
+.sign-in-right {
   width: 50%;
 
   display: flex;
@@ -30,7 +30,7 @@
   padding: 100px 12%;
 }
 
-.sign-up-right h1 {
+.sign-in-right h1 {
   position: absolute;
   top: 100px;
 
@@ -39,18 +39,18 @@
   text-align: flex-start;
 }
 
-.sign-up-right form {
+.sign-in-right form {
   display: flex;
   flex-direction: column;
 
   margin-bottom: 30px;
 }
 
-.sign-up-right form input, .sign-up-right form label {
+.sign-in-right form input, .sign-in-right form label {
   font-size: 1.6rem;
 }
 
-.sign-up-right form button {
+.sign-in-right form button {
   all: unset;
   cursor: pointer;
 
@@ -62,11 +62,11 @@
   padding: 14px 0;
 }
 
-.sign-up-right form button:hover {
+.sign-in-right form button:hover {
   opacity: 0.9;
 }
 
-.sign-up-right h2 {
+.sign-in-right h2 {
   font-weight: normal;
   font-size: 1.4rem;
   text-align: start;

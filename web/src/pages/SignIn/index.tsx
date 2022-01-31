@@ -6,11 +6,11 @@ import { Link } from 'react-router-dom';
 
 export default function SignIn() {
   return (
-    <div className="sign-up-container">
-      <div className="sign-up-left">
+    <div className="sign-in-container">
+      <div className="sign-in-left">
         <img src={Logo} alt="Logo da Fullstack" />
       </div>
-      <div className="sign-up-right">
+      <div className="sign-in-right">
         <h1>
           Sign In
         </h1>

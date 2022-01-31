@@ -12,7 +12,8 @@ export default function ModalNovoEditarVeiculo() {
     tipoModal,
     setModalAberto,
     formulario,
-    setFormulario
+    setFormulario,
+    authToken
   } = useGlobalContext();
 
   useEffect((): void => {
@@ -79,10 +80,11 @@ export default function ModalNovoEditarVeiculo() {
   }
 
   const cadastrarVeiculo = async (): Promise<void> => {
-    await fetch("http://localhost:8000/veiculos", {
+    await fetch(`${process.env.REACT_APP_API_URL}/veiculos`, {
       method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`
       },
       body: JSON.stringify(formulario)
     });
@@ -96,10 +98,11 @@ export default function ModalNovoEditarVeiculo() {
       utilizarPut = false;
     }
 
-    await fetch(`http://localhost:8000/veiculos/${veiculoDetalhado.id}`, {
+    await fetch(`${process.env.REACT_APP_API_URL}/veiculos/${veiculoDetalhado.id}`, {
       method: utilizarPut ? "PUT" : "PATCH",
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`
       },
       body: JSON.stringify(utilizarPut ? formulario : camposDiferentes)
     });

@@ -30,8 +30,10 @@ function App() {
       <GlobalContextProvider>
         <Router>
           <Routes>
-            <Route path={'/'} element={<SignIn />} />
-            <Route path={'/sign-up'} element={<SignUp />} />
+            <Routes>
+              <Route path={'/'} element={<SignIn />} />
+              <Route path={'/sign-up'} element={<SignUp />} />
+            </Routes>
             <Route
               path={'/home'}
               element={

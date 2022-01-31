@@ -17,15 +17,17 @@ export default function Home() {
     setModalAberto,
     veiculoDetalhado,
     setVeiculoDetalhado,
-    setTipoModal
+    setTipoModal,
+    authToken
   } = useGlobalContext();
 
   useEffect(() => {
     const atualizarVeiculos = async () => {
       try {
-        const response = await fetch("http://localhost:8000/veiculos", {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/veiculos`, {
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authToken}`
           }
         });
         const data = await response.json();
@@ -41,9 +43,10 @@ export default function Home() {
   useEffect(() => {
     const buscarVeiculosIniciais = async () => {
       try {
-        const response = await fetch("http://localhost:8000/veiculos", {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/veiculos`, {
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authToken}`
           }
         });
         const data = await response.json();

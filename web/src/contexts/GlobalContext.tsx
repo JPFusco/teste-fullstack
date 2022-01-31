@@ -14,6 +14,9 @@ interface IGlobalContext {
   setTipoModal: React.Dispatch<React.SetStateAction<String>>;
   formulario: IFormulario;
   setFormulario: React.Dispatch<React.SetStateAction<IFormulario>>;
+  authToken: String | undefined;
+  setAuthToken: React.Dispatch<String>;
+  removeAuthToken: () => void;
 }
 
 export const GlobalContext = createContext<IGlobalContext>({} as IGlobalContext);

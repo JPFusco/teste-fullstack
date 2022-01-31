@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import IVeiculo from '../interfaces/veiculo';
 import IFormulario from '../interfaces/formulario';
+import { useLocalStorage } from 'react-use';
 
 export default function useGlobalContextProvider() {
   const [veiculos, setVeiculos] = useState<Array<IVeiculo>>([]);
@@ -14,6 +15,9 @@ export default function useGlobalContextProvider() {
     descricao: "",
     vendido: false
   });
+  const [authToken, setAuthToken, removeAuthToken]
+    : [String | undefined, React.Dispatch<String>, () => void]
+    = useLocalStorage('auth-token');
 
   return {
     veiculos,
@@ -25,6 +29,9 @@ export default function useGlobalContextProvider() {
     tipoModal,
     setTipoModal,
     formulario,
-    setFormulario
+    setFormulario,
+    authToken,
+    setAuthToken,
+    removeAuthToken
   }
 }

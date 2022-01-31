@@ -30,7 +30,10 @@ const encontrarVeiculoDB = async (idVeiculo: string, idUsuario: string) => {
 const obterVeiculos = async (req: Request, res: Response) => {
   const idUsuario = req.usuario;
   try {
-    const veiculos = await knexInstance<IVeiculo>('veiculos').select('*').where({ usuario_id: idUsuario });
+    const veiculos = await knexInstance<IVeiculo>('veiculos')
+      .select('*')
+      .where({ usuario_id: idUsuario })
+      .orderBy('id');
 
     if (!veiculos) {
       return res.status(400).json({ message: 'Não foi possível encontrar um veículo' });
@@ -81,7 +84,7 @@ const cadastrarVeiculo = async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'Não foi possível cadastrar o veículo' });
     }
 
-    return res.status(201).json();
+    return res.status(200).json('Veículo cadastrado com sucesso');
   } catch (error: any) {
     return res.status(400).json(error.message);
   }

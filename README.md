@@ -1,3 +1,6 @@
+Link deploy: https://testefullstack-web.netlify.app/
+
+
 # Teste fullstack
 
 Leia primeiro todo o projeto, faça sua estimativa de horas para o desenvolvimento e envie um email com o título `[Teste Fullstack] Estimativa` para lagden@textecnologia.com.br

@@ -1,12 +1,14 @@
-import './style.css';
 import Logo from '../../assets/logo.svg';
 import IconSignOut from '../../assets/sign-out.svg';
+import toasts from '../../helpers/toastify';
 import useGlobalContext from '../../hooks/useGlobalContext';
+import './style.css';
 
 export default function Header() {
   const { removeAuthToken } = useGlobalContext();
 
   const handleSignOut = () => {
+    toasts.notifySuccess("Logout realizado com sucesso");
     removeAuthToken();
   }
 

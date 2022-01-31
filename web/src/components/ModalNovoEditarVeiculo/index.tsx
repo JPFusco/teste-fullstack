@@ -2,6 +2,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 import React, { useEffect } from 'react';
+import toasts from '../../helpers/toastify';
 import useGlobalContext from '../../hooks/useGlobalContext';
 import IFormulario from '../../interfaces/formulario';
 import './style.css';
@@ -71,18 +72,28 @@ export default function ModalNovoEditarVeiculo() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
 
-    if (!formulario.veiculo || !formulario.marca || !formulario.ano || !formulario.descricao) {
-      return; //TODO - Adicionar toastify
-    }
-
     try {
+      if (!formulario.veiculo || !formulario.marca || !formulario.ano || !formulario.descricao) {
+        const error = { message: "Todos os campos são obrigatórios" };
+        throw error;
+      }
+
+      if (!Number(formulario.ano)) {
+        const error = { message: "Ano precisa ser um número" };
+        throw error;
+      }
+
       tipoModal === "Novo" ? await cadastrarVeiculo() : await atualizarVeiculo();
       updateVeiculos();
+      handleFecharModal();
     } catch (error: any) {
-      console.log(error.message);
-    }
+      if (error.message) {
+        toasts.notifyError(error.message);
+        return;
+      }
 
-    handleFecharModal();
+      toasts.notifyError(error);
+    }
   }
 
   const cadastrarVeiculo = async (): Promise<void> => {
@@ -100,6 +111,8 @@ export default function ModalNovoEditarVeiculo() {
     if (response.status >= 400) {
       throw veiculoCadastrado;
     }
+
+    toasts.notifySuccess("Veículo cadastrado com sucesso");
   }
 
   const atualizarVeiculo = async (): Promise<void> => {
@@ -123,6 +136,8 @@ export default function ModalNovoEditarVeiculo() {
       const error = await response.json();
       throw error;
     }
+
+    toasts.notifySuccess("Veículo atualizado com sucesso");
   }
 
   const algumCampoDiferente = (): Partial<IFormulario> => {

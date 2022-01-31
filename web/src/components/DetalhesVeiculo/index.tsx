@@ -3,6 +3,7 @@ import IconeExcluir from '../../assets/delete-icon.svg';
 import IconeEditar from '../../assets/icone-editar.svg';
 import VendidoFalse from '../../assets/vendido-false.svg';
 import VendidoTrue from '../../assets/vendido-true.svg';
+import toasts from '../../helpers/toastify';
 import useGlobalContext from '../../hooks/useGlobalContext';
 import './style.css';
 
@@ -49,9 +50,15 @@ export default function DetalhesVeiculo() {
         throw error;
       }
 
+      toasts.notifySuccess("Veículo excluído com sucesso");
       updateVeiculos();
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      if (error.message) {
+        toasts.notifyError(error.message);
+        return;
+      }
+
+      toasts.notifyError(error);
     }
   }
 

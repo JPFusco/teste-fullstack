@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Logo from '../../assets/logo.svg';
 import useGlobalContexts from '../../hooks/useGlobalContext';
+import toasts from '../../helpers/toastify';
 import './style.css';
 
 interface IFormularioCadastro {
@@ -45,7 +46,7 @@ export default function SignUp() {
       const senhasIguais = formularioCadastro.senha === formularioCadastro.confirmarSenha;
 
       if (!senhasIguais) {
-        return console.warn("As senhas precisam ser iguais");
+        return toasts.notifyError("As senhas precisam ser iguais");
       }
 
       const { confirmarSenha, ...body } = formularioCadastro;
@@ -62,9 +63,14 @@ export default function SignUp() {
         throw error;
       }
 
+      toasts.notifySuccess("Cadastro realizado com sucesso");
       navigate('/');
     } catch (error: any) {
-      console.log(error.message);
+      if (error.message) {
+        return toasts.notifyError(error.message);
+      }
+
+      toasts.notifyError(error);
     }
 
   }

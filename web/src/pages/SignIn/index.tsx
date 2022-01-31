@@ -2,6 +2,7 @@ import TextField from '@mui/material/TextField';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Logo from '../../assets/logo.svg';
+import toasts from '../../helpers/toastify';
 import useGlobalContexts from '../../hooks/useGlobalContext';
 import './style.css';
 
@@ -48,20 +49,20 @@ export default function SignIn() {
         },
         body: JSON.stringify(formularioLogin)
       });
-      const { token } = await response.json();
+      const responseJson = await response.json();
 
       if (response.status >= 400) {
-        const error = await response.json();
-        throw error;
+        throw responseJson;
       }
 
-      setAuthToken(token);
+      toasts.notifySuccess("Login realizado com sucesso");
+      setAuthToken(responseJson.token);
       navigate('/home');
     } catch (error: any) {
       if (error.message) {
-        return console.log(error.message);
+        return toasts.notifyError(error.message);
       }
-      console.log(error);
+      toasts.notifyError(error);
     }
   };
 
